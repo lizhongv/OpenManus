@@ -90,13 +90,17 @@ class MCPAgent(ToolCallAgent):
         Returns:
             A tuple of (added_tools, removed_tools)
         """
-        if not self.mcp_clients.session:
+        if not self.mcp_clients.sessions:
             return [], []
 
         # Get current tool schemas directly from the server
+<<<<<<< HEAD
         # response = await self.mcp_clients.session.list_tools()
         client_session = next(iter(self.mcp_clients.session.values()))  # TODO
         response = await client_session.list_tools()
+=======
+        response = await self.mcp_clients.list_tools()
+>>>>>>> 36713cda624b33aa055d5bcc4ee24d3d05578c29
         current_tools = {tool.name: tool.inputSchema for tool in response.tools}
 
         # Determine added, removed, and changed tools
@@ -136,7 +140,7 @@ class MCPAgent(ToolCallAgent):
     async def think(self) -> bool:
         """Process current state and decide next action."""
         # Check MCP session and tools availability
-        if not self.mcp_clients.session or not self.mcp_clients.tool_map:
+        if not self.mcp_clients.sessions or not self.mcp_clients.tool_map:
             logger.info("MCP service is no longer available, ending interaction")
             self.state = AgentState.FINISHED
             return False
@@ -173,7 +177,7 @@ class MCPAgent(ToolCallAgent):
 
     async def cleanup(self) -> None:
         """Clean up MCP connection when done."""
-        if self.mcp_clients.session:
+        if self.mcp_clients.sessions:
             await self.mcp_clients.disconnect()
             logger.info("MCP connection closed")
 
