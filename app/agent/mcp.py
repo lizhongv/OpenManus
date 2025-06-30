@@ -94,7 +94,9 @@ class MCPAgent(ToolCallAgent):
             return [], []
 
         # Get current tool schemas directly from the server
-        response = await self.mcp_clients.session.list_tools()
+        # response = await self.mcp_clients.session.list_tools()
+        client_session = next(iter(self.mcp_clients.session.values()))  # TODO
+        response = await client_session.list_tools()
         current_tools = {tool.name: tool.inputSchema for tool in response.tools}
 
         # Determine added, removed, and changed tools
